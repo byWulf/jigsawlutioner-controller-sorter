@@ -1,0 +1,16 @@
+{
+  "name": "jigsawlutioner-controller-sorter",
+  "version": "1.0.0",
+  "description": "Sorter station, that can move the pieces into one of the existing containers",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/byWulf/jigsawlutioner-controller-sorter.git"
+  },
+  "author": "byWulf",
+  "license": "MIT",
+  "main": "index.js",
+  "dependencies": {
+    "jigsawlutioner-controller": "^2.0"
+  }
+}
