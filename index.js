@@ -39,7 +39,6 @@ controller.createEndpoint('move-to-box', async (parameters, resolve) => {
         moveMotor.setPosition(-500),
     ]);
 
-
     await pushMotor.setPower(0);
     await moveMotor.setPower(0);
     await boxMotor.setPower(0);
