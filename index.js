@@ -31,12 +31,18 @@ controller.createEndpoint('move-to-box', async (parameters, resolve) => {
 
     resolve();
 
+    await pushMotor.setPosition(-250);
     await moveMotor.setPosition(-1300);
 
     await Promise.all([
-        await pushMotor.setPosition(-100),
-        await moveMotor.setPosition(-500),
-    ])
+        pushMotor.setPosition(-100),
+        moveMotor.setPosition(-500),
+    ]);
+
+
+    await pushMotor.setPower(0);
+    await moveMotor.setPower(0);
+    await boxMotor.setPower(0);
 });
 
 async function movePieceToCliff(moveMotor, pushMotor, offset) {
@@ -48,7 +54,7 @@ async function movePieceToCliff(moveMotor, pushMotor, offset) {
 
     await moveMotor.setPosition(-offsetInDegree);
 
-    await pushMotor.setPosition(-250);
+    await pushMotor.setPosition(-200);
 
-    await moveMotor.setPosition(-1000);
+    await moveMotor.setPosition(-800);
 }
