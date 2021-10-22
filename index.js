@@ -4,9 +4,9 @@ import BrickPi from 'brickpi3';
 const controller = new Controller(3000);
 
 controller.createEndpoint('reset', async (parameters, resolve) => {
-    const pushMotor = await controller.getMotor(parameters.pushMotor);
-    const moveMotor = await controller.getMotor(parameters.moveMotor);
-    const boxMotor = await controller.getMotor(parameters.boxMotor);
+    const pushMotor = await controller.getMotor(parameters, 'pushMotor');
+    const moveMotor = await controller.getMotor(parameters, 'moveMotor');
+    const boxMotor = await controller.getMotor(parameters, 'boxMotor');
 
     await Promise.all([
         controller.resetMotor(pushMotor, BrickPi.utils.RESET_MOTOR_LIMIT.FORWARD_LIMIT, 30),
@@ -16,12 +16,16 @@ controller.createEndpoint('reset', async (parameters, resolve) => {
 });
 
 controller.createEndpoint('move-to-box', async (parameters, resolve) => {
-    const pushMotor = await controller.getMotor(parameters.pushMotor);
-    const moveMotor = await controller.getMotor(parameters.moveMotor);
-    const boxMotor = await controller.getMotor(parameters.boxMotor);
+    const pushMotor = await controller.getMotor(parameters, 'pushMotor');
+    const moveMotor = await controller.getMotor(parameters, 'moveMotor');
+    const boxMotor = await controller.getMotor(parameters, 'boxMotor');
+
+    if (typeof parameters.box === 'undefined') {
+        throw new Error('Parameter "box" was missing from the call.');
+    }
 
     await Promise.all([
-        movePieceToCliff(moveMotor, pushMotor, parameters.offset),
+        movePieceToCliff(moveMotor, pushMotor, parameters.offset || 0),
         boxMotor.setPosition(parameters.box * -370)
     ]);
 
