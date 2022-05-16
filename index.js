@@ -31,7 +31,6 @@ controller.createEndpoint('move-to-box', async (parameters, resolve) => {
 
     resolve();
 
-    await pushMotor.setPosition(-250);
     await moveMotor.setPosition(-1300);
 
     await Promise.all([
@@ -45,11 +44,15 @@ controller.createEndpoint('move-to-box', async (parameters, resolve) => {
 });
 
 async function movePieceToCliff(moveMotor, pushMotor, offset) {
-    const offsetToMiddle = 270;
+    const offsetToMiddle = 220;
     const cmPerTeeth = 3.2 / 10; //https://www.brickowl.com/catalog/lego-gear-rack-4-3743
     const cmPerRotation = cmPerTeeth * 20; //https://www.brickowl.com/catalog/lego-gear-with-20-teeth-and-double-bevel-unreinforced-32269
 
-    let offsetInDegree = offsetToMiddle + 360 * offset * (6/*cm plate height*/ / 2) / cmPerRotation;
+    let offsetInDegree = offsetToMiddle + 360 * offset * (14/*cm plate height*/ / 2) / cmPerRotation;
+
+    if (offsetInDegree < 0) {
+        offsetInDegree = 0;
+    }
 
     await moveMotor.setPosition(-offsetInDegree);
 
