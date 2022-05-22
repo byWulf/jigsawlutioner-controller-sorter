@@ -11,7 +11,7 @@ controller.createEndpoint('reset', async (parameters, resolve) => {
     await Promise.all([
         controller.resetMotor(pushMotor, BrickPi.utils.RESET_MOTOR_LIMIT.FORWARD_LIMIT, 30),
         controller.resetMotor(moveMotor, BrickPi.utils.RESET_MOTOR_LIMIT.FORWARD_LIMIT, 50),
-        controller.resetMotor(boxMotor, BrickPi.utils.RESET_MOTOR_LIMIT.FORWARD_LIMIT, 70),
+        controller.resetMotor(boxMotor, BrickPi.utils.RESET_MOTOR_LIMIT.BACKWARD_LIMIT, 70),
     ]);
 });
 
@@ -24,9 +24,14 @@ controller.createEndpoint('move-to-box', async (parameters, resolve) => {
         throw new Error('Parameter "box" was missing from the call.');
     }
 
+    const boxTeeths = 5 * 10; //https://www.brickowl.com/catalog/lego-gear-rack-4-3743
+    const teethsPerRotation = 16; //https://www.brickowl.com/catalog/lego-gear-with-16-teeth-reinforced-94925
+    const rotationPerBox = boxTeeths / teethsPerRotation * 360;
+    const boxOffsetRotation = 10 / teethsPerRotation * 360;
+
     await Promise.all([
         movePieceToCliff(moveMotor, pushMotor, parameters.offset || 0),
-        boxMotor.setPosition(parameters.box * -370)
+        boxMotor.setPosition(parameters.box * rotationPerBox + boxOffsetRotation),
     ]);
 
     resolve();
