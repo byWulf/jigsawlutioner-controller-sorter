@@ -24,14 +24,9 @@ controller.createEndpoint('move-to-box', async (parameters, resolve) => {
         throw new Error('Parameter "box" was missing from the call.');
     }
 
-    const boxTeeths = 5 * 10; //https://www.brickowl.com/catalog/lego-gear-rack-4-3743
-    const teethsPerRotation = 16; //https://www.brickowl.com/catalog/lego-gear-with-16-teeth-reinforced-94925
-    const rotationPerBox = boxTeeths / teethsPerRotation * 360;
-    const boxOffsetRotation = 10 / teethsPerRotation * 360;
-
     await Promise.all([
         movePieceToCliff(moveMotor, pushMotor, parameters.offset || 0),
-        boxMotor.setPosition(parameters.box * rotationPerBox + boxOffsetRotation),
+        boxMotor.setPosition(getBoxPosition(parameters.box)),
     ]);
 
     resolve();
@@ -47,6 +42,26 @@ controller.createEndpoint('move-to-box', async (parameters, resolve) => {
     await moveMotor.setPower(0);
     await boxMotor.setPower(0);
 });
+
+controller.createEndpoint('select-box', async (parameters, resolve) => {
+    const boxMotor = await controller.getMotor(parameters, 'boxMotor');
+
+    if (typeof parameters.box === 'undefined') {
+        throw new Error('Parameter "box" was missing from the call.');
+    }
+
+    await boxMotor.setPosition(getBoxPosition(parameters.box));
+    await boxMotor.setPower(0);
+});
+
+function getBoxPosition(box) {
+    const boxTeeths = 5 * 10; //https://www.brickowl.com/catalog/lego-gear-rack-4-3743
+    const teethsPerRotation = 16; //https://www.brickowl.com/catalog/lego-gear-with-16-teeth-reinforced-94925
+    const rotationPerBox = boxTeeths / teethsPerRotation * 360;
+    const boxOffsetRotation = 10 / teethsPerRotation * 360;
+
+    return box * rotationPerBox + boxOffsetRotation;
+}
 
 async function movePieceToCliff(moveMotor, pushMotor, offset) {
     const offsetToMiddle = 220;
